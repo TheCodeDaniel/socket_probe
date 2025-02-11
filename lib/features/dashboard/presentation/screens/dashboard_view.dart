@@ -139,8 +139,10 @@ class _DashboardViewState extends State<DashboardView> {
                             height: size.height * 0.4,
                             color: Colors.grey.shade100,
                             padding: EdgeInsets.all(10),
-                            child: SelectableText(
-                              state.messages.toString().replaceAll("[", '').replaceAll("]", ''),
+                            child: SingleChildScrollView(
+                              child: SelectableText(
+                                state.messages.join("\n").toString().replaceAll("[", '').replaceAll("]", ''),
+                              ),
                             ),
                           ),
                         ],

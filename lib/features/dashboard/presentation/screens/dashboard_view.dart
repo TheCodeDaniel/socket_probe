@@ -15,38 +15,40 @@ class _DashboardViewState extends State<DashboardView> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     return Form(
       key: _formKey,
       child: Container(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          spacing: 15,
-          children: [
-            SizedBox(
-              width: 650,
-              height: 92,
-              child: AppTextField(
-                hintText: "wss://testsocket.net",
-                outerTitle: "WebSocket URL",
-                controller: null,
-                validator: (val) {
-                  if (val != null && !Validators.isValidWebSocketUrl(val)) return 'Provide a valid socket URL';
-                  return null;
-                },
-                suffixIcon: SizedBox(
-                  width: 150,
-                  child: AppButton(
-                    onPressed: () {
-                      if (!(_formKey.currentState?.validate() ?? false)) return;
-                    },
-                    content: Text("Connect"),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            spacing: 15,
+            children: [
+              SizedBox(
+                width: size.width * 0.5,
+                child: AppTextField(
+                  hintText: "wss://testsocket.net",
+                  outerTitle: "WebSocket URL",
+                  controller: null,
+                  validator: (val) {
+                    if (val != null && !Validators.isValidWebSocketUrl(val)) return 'Provide a valid socket URL';
+                    return null;
+                  },
+                  suffixIcon: SizedBox(
+                    width: size.width * 0.1,
+                    child: AppButton(
+                      onPressed: () {
+                        if (!(_formKey.currentState?.validate() ?? false)) return;
+                      },
+                      content: Text("Connect"),
+                    ),
                   ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

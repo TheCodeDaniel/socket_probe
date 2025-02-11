@@ -8,6 +8,7 @@ class NavigationMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     return BlocBuilder<NavigationCubit, int>(
       builder: (context, state) {
         return Scaffold(
@@ -15,6 +16,7 @@ class NavigationMenu extends StatelessWidget {
             child: Row(
               children: [
                 NavigationRail(
+                  minWidth: size.width * 0.01,
                   labelType: NavigationRailLabelType.all,
                   elevation: 5,
                   destinations: [

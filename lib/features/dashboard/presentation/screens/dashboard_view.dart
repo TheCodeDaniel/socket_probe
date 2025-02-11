@@ -17,6 +17,9 @@ class DashboardView extends StatefulWidget {
 
 class _DashboardViewState extends State<DashboardView> {
   late DashboardBloc dashboardBloc;
+
+  TextEditingController textController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -52,7 +55,7 @@ class _DashboardViewState extends State<DashboardView> {
                       width: size.width * 0.5,
                       child: AppTextField(
                         hintText: "wss://testsocket.net",
-                        outerTitle: "WebSocket URL",
+                        outerTitle: "WebSocket URL (wss/ws protocols only)",
                         controller: null,
                         validator: (val) {
                           if (val != null && !Validators.isValidWebSocketUrl(val)) return 'Provide a valid socket URL';
@@ -77,6 +80,8 @@ class _DashboardViewState extends State<DashboardView> {
                         ),
                       ),
                     ),
+
+                    // socket connection status row
                     Row(
                       spacing: 5,
                       children: [
@@ -90,7 +95,56 @@ class _DashboardViewState extends State<DashboardView> {
                           ),
                         )
                       ],
-                    )
+                    ),
+
+                    // input fields section
+                    if (connected)
+                      Column(
+                        children: [
+                          // textfield row
+                          Row(
+                            spacing: 20,
+                            children: [
+                              SizedBox(
+                                width: size.width * 0.8,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  spacing: 15,
+                                  children: [
+                                    AppTextField(
+                                      controller: textController,
+                                      maxLines: 5,
+                                      hintText: "Send a random String to test e.g 'Hello Daniel' ",
+                                    ),
+                                    SizedBox(
+                                      width: size.width * 0.8,
+                                      child: AppButton(
+                                        content: Text("Send message"),
+                                        onPressed: () {
+                                          dashboardBloc.add(SendMessageRequested(textController.text));
+                                          textController.clear();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          // display response messages
+                          SizedBox(height: 20),
+                          Container(
+                            width: size.width * 0.8,
+                            height: size.height * 0.4,
+                            color: Colors.grey.shade100,
+                            padding: EdgeInsets.all(10),
+                            child: SelectableText(
+                              state.messages.toString().replaceAll("[", '').replaceAll("]", ''),
+                            ),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),

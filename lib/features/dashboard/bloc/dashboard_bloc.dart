@@ -69,7 +69,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   Future<void> _onSendJsonRequested(SendJsonRequested event, Emitter<DashboardState> emit) async {
     try {
       repository.sendJson(event.data);
-      _messages.add("Sent JSON: ${event.data}");
+      _messages.add("Sent JSON: ${event.data}\n");
       emit(DashboardConnected(messages: List.from(_messages)));
     } catch (e) {
       emit(DashboardError(e.toString()));
@@ -78,7 +78,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
   Future<void> _onMessageReceived(MessageReceived event, Emitter<DashboardState> emit) async {
     // Log the incoming message.
-    _messages.add("Received: ${event.message}");
+    _messages.add("\nReceived: ${event.message}");
     emit(DashboardConnected(messages: List.from(_messages)));
   }
 

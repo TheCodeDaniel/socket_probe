@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:socket_probe/common/utils/dialogs.dart';
 import 'package:socket_probe/common/utils/validators.dart';
 import 'package:socket_probe/common/widgets/app_button.dart';
 import 'package:socket_probe/common/widgets/app_textfield.dart';
+import 'package:socket_probe/features/dashboard/bloc/dashboard_bloc.dart';
+import 'package:socket_probe/features/dashboard/bloc/dashboard_event.dart';
+import 'package:socket_probe/features/dashboard/bloc/dashboard_state.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
@@ -11,45 +16,87 @@ class DashboardView extends StatefulWidget {
 }
 
 class _DashboardViewState extends State<DashboardView> {
+  late DashboardBloc dashboardBloc;
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    dashboardBloc = context.read();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    return Form(
-      key: _formKey,
-      child: Container(
-        padding: const EdgeInsets.all(20.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            spacing: 15,
-            children: [
-              SizedBox(
-                width: size.width * 0.5,
-                child: AppTextField(
-                  hintText: "wss://testsocket.net",
-                  outerTitle: "WebSocket URL",
-                  controller: null,
-                  validator: (val) {
-                    if (val != null && !Validators.isValidWebSocketUrl(val)) return 'Provide a valid socket URL';
-                    return null;
-                  },
-                  suffixIcon: SizedBox(
-                    width: size.width * 0.1,
-                    child: AppButton(
-                      onPressed: () {
-                        if (!(_formKey.currentState?.validate() ?? false)) return;
-                      },
-                      content: Text("Connect"),
+    return BlocListener<DashboardBloc, DashboardState>(
+      listener: (context, state) async {
+        if (state is DashboardError) {
+          Dialogs().showInfoDialog(context, message: state.error);
+        }
+      },
+      child: BlocBuilder<DashboardBloc, DashboardState>(
+        builder: (context, state) {
+          bool isLoading = (state is DashboardConnecting);
+          bool connected = (state is DashboardConnected);
+          return Form(
+            key: _formKey,
+            child: Container(
+              padding: const EdgeInsets.all(20.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  spacing: 15,
+                  children: [
+                    SizedBox(
+                      width: size.width * 0.5,
+                      child: AppTextField(
+                        hintText: "wss://testsocket.net",
+                        outerTitle: "WebSocket URL",
+                        controller: null,
+                        validator: (val) {
+                          if (val != null && !Validators.isValidWebSocketUrl(val)) return 'Provide a valid socket URL';
+                          return null;
+                        },
+                        suffixIcon: SizedBox(
+                          width: size.width * 0.15,
+                          child: AppButton(
+                            onPressed: () {
+                              if (!(_formKey.currentState?.validate() ?? false)) return;
+
+                              if (connected) {
+                                dashboardBloc.add(DisconnectRequested());
+                                return;
+                              }
+                              dashboardBloc.add(ConnectRequested());
+                            },
+                            content: isLoading
+                                ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white))
+                                : Text(connected ? "disconnect" : "Connect"),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    Row(
+                      spacing: 5,
+                      children: [
+                        Text(connected ? 'Connected' : 'Not connected'),
+                        Container(
+                          margin: EdgeInsets.only(top: 3),
+                          child: Icon(
+                            Icons.circle,
+                            color: connected ? Colors.green : Colors.red,
+                            size: 15,
+                          ),
+                        )
+                      ],
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-        ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

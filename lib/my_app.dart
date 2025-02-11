@@ -4,6 +4,8 @@ import 'package:socket_probe/common/themes/app_theme.dart';
 import 'package:socket_probe/common/widgets/unknown_route_screen.dart';
 import 'package:socket_probe/core/routes/route_names.dart';
 import 'package:socket_probe/core/routes/routes.dart';
+import 'package:socket_probe/features/dashboard/bloc/dashboard_bloc.dart';
+import 'package:socket_probe/features/dashboard/data/repository/dashboard_repo_impl.dart';
 import 'package:socket_probe/features/navigation/bloc/navigation_cubit.dart';
 
 class MyApp extends StatelessWidget {
@@ -11,11 +13,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final DashboardRepoImpl dashboardRepository = DashboardRepoImpl('wss://echo.websocket.events');
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (context) => NavigationCubit(),
         ),
+        BlocProvider(
+          create: (context) => DashboardBloc(repository: dashboardRepository),
+        )
       ],
       child: MaterialApp(
         initialRoute: RouteNames.initialPage,

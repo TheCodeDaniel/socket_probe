@@ -14,8 +14,10 @@ class AppTheme {
     ),
   );
 
-  static ThemeData themeData = ThemeData.light(
+  static ThemeData themeData = ThemeData(
     useMaterial3: false,
+    primarySwatch: Colors.indigo,
+    brightness: Brightness.light,
   ).copyWith(
     primaryColor: AppColors.primaryColor,
     datePickerTheme: DatePickerThemeData(

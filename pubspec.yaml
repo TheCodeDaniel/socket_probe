@@ -19,6 +19,7 @@ dependencies:
   flutter_bloc: ^9.0.0
   bloc_test: ^10.0.0
   equatable: ^2.0.7
+  provider: ^6.1.2
 
   # network connection
   web_socket_channel: ^3.0.2
@@ -30,6 +31,8 @@ dependencies:
 
   get_it: ^8.0.3
   regex_router: ^2.0.2
+  iconsax: ^0.0.8
+ 
 
 dev_dependencies:
   flutter_test:

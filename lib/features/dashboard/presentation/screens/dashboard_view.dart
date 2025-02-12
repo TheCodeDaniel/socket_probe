@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:socket_probe/features/wsprotocol/presentation/screens/dashboard_view.dart';
+import 'package:socket_probe/features/wsprotocol/presentation/screens/wsprotocol_view.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});

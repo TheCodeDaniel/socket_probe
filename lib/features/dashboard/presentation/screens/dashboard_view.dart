@@ -18,14 +18,13 @@ class _DashboardViewState extends State<DashboardView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const SizedBox(height: 20),
-          SizedBox(
+          Container(
+            color: Colors.grey.shade200,
             width: size.width * 0.5,
             child: TabBar(
               // Customize the appearance and behavior of the tab bar
-
               labelStyle: TextStyle(
                 color: Colors.black,
-                fontWeight: FontWeight.bold,
               ),
               unselectedLabelStyle: TextStyle(
                 color: Colors.black,
@@ -33,7 +32,7 @@ class _DashboardViewState extends State<DashboardView> {
               // Add your tabs here
               tabs: const [
                 Tab(text: "WS/ WSS Protocol"),
-                Tab(text: "Event Sockets"),
+                Tab(text: "Event Based Sockets"),
               ],
             ),
           ),

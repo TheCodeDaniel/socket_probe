@@ -7,8 +7,9 @@ import 'package:socket_probe/features/wsprotocol/bloc/wsprotocol_state.dart';
 import 'package:socket_probe/features/wsprotocol/data/repository/wsprotocol_repo_impl.dart';
 
 class WsprotocolBloc extends Bloc<WsprotocolEvent, WsprotocolState> {
-  late TextEditingController wssTextController;
-  late TextEditingController randomStringController;
+  TextEditingController wssTextController = TextEditingController();
+  TextEditingController randomStringController = TextEditingController();
+
   late WsprotocolRepoImpl repository;
   StreamSubscription? _messageSubscription;
   final List<dynamic> _messages = [];

@@ -16,15 +16,13 @@ class WsprotocolView extends StatefulWidget {
 }
 
 class _WsprotocolViewState extends State<WsprotocolView> {
-  late WsprotocolBloc dashboardBloc;
+  late WsprotocolBloc protocolBloc;
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
-    dashboardBloc = context.read();
-    dashboardBloc.wssTextController = TextEditingController();
-    dashboardBloc.randomStringController = TextEditingController();
+    protocolBloc = context.read();
     super.initState();
   }
 
@@ -56,7 +54,7 @@ class _WsprotocolViewState extends State<WsprotocolView> {
                       child: AppTextField(
                         hintText: "wss://testsocket.net",
                         outerTitle: "WebSocket URL (wss/ws protocols only)",
-                        controller: dashboardBloc.wssTextController,
+                        controller: protocolBloc.wssTextController,
                         validator: (val) {
                           if (val != null && !Validators.isValidWebSocketUrl(val)) return 'Provide a valid socket URL';
                           return null;
@@ -68,10 +66,10 @@ class _WsprotocolViewState extends State<WsprotocolView> {
                               if (!(_formKey.currentState?.validate() ?? false)) return;
 
                               if (connected) {
-                                dashboardBloc.add(DisconnectRequested());
+                                protocolBloc.add(DisconnectRequested());
                                 return;
                               }
-                              dashboardBloc.add(ConnectRequested());
+                              protocolBloc.add(ConnectRequested());
                             },
                             content: isLoading
                                 ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white))
@@ -100,6 +98,7 @@ class _WsprotocolViewState extends State<WsprotocolView> {
                     // input fields section
                     if (connected)
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // textfield row
                           Row(
@@ -112,7 +111,7 @@ class _WsprotocolViewState extends State<WsprotocolView> {
                                   spacing: 15,
                                   children: [
                                     AppTextField(
-                                      controller: dashboardBloc.randomStringController,
+                                      controller: protocolBloc.randomStringController,
                                       maxLines: 5,
                                       hintText: "Send a random String to test e.g 'Hello Daniel' ",
                                     ),
@@ -121,10 +120,10 @@ class _WsprotocolViewState extends State<WsprotocolView> {
                                       child: AppButton(
                                         content: Text("Send message"),
                                         onPressed: () {
-                                          dashboardBloc.add(
-                                            SendMessageRequested(dashboardBloc.randomStringController.text),
+                                          protocolBloc.add(
+                                            SendMessageRequested(protocolBloc.randomStringController.text),
                                           );
-                                          dashboardBloc.randomStringController.clear();
+                                          protocolBloc.randomStringController.clear();
                                         },
                                       ),
                                     ),

@@ -1,16 +1,19 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:socket_probe/features/dashboard/bloc/dashboard_event.dart';
 import 'package:socket_probe/features/dashboard/bloc/dashboard_state.dart';
 import 'package:socket_probe/features/dashboard/data/repository/dashboard_repo_impl.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
-  final DashboardRepoImpl repository;
+  late TextEditingController wssTextController;
+  late TextEditingController randomStringController;
+  late DashboardRepoImpl repository;
   StreamSubscription? _messageSubscription;
   final List<dynamic> _messages = [];
 
-  DashboardBloc({required this.repository}) : super(DashboardInitial()) {
+  DashboardBloc() : super(DashboardInitial()) {
     // Event handler for connecting.
     on<ConnectRequested>(_onConnectRequested);
     // Event handler for disconnecting.
@@ -28,6 +31,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   Future<void> _onConnectRequested(ConnectRequested event, Emitter<DashboardState> emit) async {
     emit(DashboardConnecting());
     try {
+      repository = DashboardRepoImpl(wssTextController.text);
       repository.connect();
       // Listen for messages from the repository.
       _messageSubscription = repository.messages.listen(

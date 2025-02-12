@@ -18,13 +18,13 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView> {
   late DashboardBloc dashboardBloc;
 
-  TextEditingController textController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     dashboardBloc = context.read();
+    dashboardBloc.wssTextController = TextEditingController();
+    dashboardBloc.randomStringController = TextEditingController();
     super.initState();
   }
 
@@ -56,7 +56,7 @@ class _DashboardViewState extends State<DashboardView> {
                       child: AppTextField(
                         hintText: "wss://testsocket.net",
                         outerTitle: "WebSocket URL (wss/ws protocols only)",
-                        controller: null,
+                        controller: dashboardBloc.wssTextController,
                         validator: (val) {
                           if (val != null && !Validators.isValidWebSocketUrl(val)) return 'Provide a valid socket URL';
                           return null;
@@ -112,7 +112,7 @@ class _DashboardViewState extends State<DashboardView> {
                                   spacing: 15,
                                   children: [
                                     AppTextField(
-                                      controller: textController,
+                                      controller: dashboardBloc.randomStringController,
                                       maxLines: 5,
                                       hintText: "Send a random String to test e.g 'Hello Daniel' ",
                                     ),
@@ -121,8 +121,10 @@ class _DashboardViewState extends State<DashboardView> {
                                       child: AppButton(
                                         content: Text("Send message"),
                                         onPressed: () {
-                                          dashboardBloc.add(SendMessageRequested(textController.text));
-                                          textController.clear();
+                                          dashboardBloc.add(
+                                            SendMessageRequested(dashboardBloc.randomStringController.text),
+                                          );
+                                          dashboardBloc.randomStringController.clear();
                                         },
                                       ),
                                     ),

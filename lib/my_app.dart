@@ -4,8 +4,8 @@ import 'package:socket_probe/common/themes/app_theme.dart';
 import 'package:socket_probe/common/widgets/unknown_route_screen.dart';
 import 'package:socket_probe/core/routes/route_names.dart';
 import 'package:socket_probe/core/routes/routes.dart';
-import 'package:socket_probe/features/dashboard/bloc/dashboard_bloc.dart';
 import 'package:socket_probe/features/navigation/bloc/navigation_cubit.dart';
+import 'package:socket_probe/features/wsprotocol/bloc/wsprotocol_bloc.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
           create: (context) => NavigationCubit(),
         ),
         BlocProvider(
-          create: (context) => DashboardBloc(),
+          create: (context) => WsprotocolBloc(),
         )
       ],
       child: MaterialApp(

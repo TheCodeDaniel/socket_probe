@@ -45,6 +45,10 @@ class WsprotocolRepoImpl {
 
   /// Sends a plain text message over the WebSocket.
   void sendMessage(String message) {
+    if (_channel == null) {
+      connect();
+    }
+
     if (_channel != null) {
       _channel?.sink.add(message);
     } else {

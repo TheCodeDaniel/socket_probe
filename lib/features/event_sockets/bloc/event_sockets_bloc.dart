@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:socket_probe/features/event_sockets/bloc/event_sockets_event.dart';
 
@@ -11,6 +12,8 @@ class EventSocketsBloc extends Bloc<EventSocketsEvent, EventSocketsState> {
 
   StreamSubscription? _messageSubscription;
   final List<dynamic> _messages = [];
+
+  final socketTextController = TextEditingController();
 
   EventSocketsBloc() : super(EventSocketsInitial()) {
     // handle socket connection
@@ -28,14 +31,6 @@ class EventSocketsBloc extends Bloc<EventSocketsEvent, EventSocketsState> {
     // handle connection error
     on<ConnectionErrorOccurred>(_onConnectionErrorOccurred);
   }
-
-  dynamic defaultParamList = <String, dynamic>{
-    'auth': {
-      'token': '',
-    },
-    'transports': ['websocket'],
-    'autoConnect': true,
-  };
 
   _handleConnect(ConnectRequested event, Emitter<EventSocketsState> emit) {
     try {

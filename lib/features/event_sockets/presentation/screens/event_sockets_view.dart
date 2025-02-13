@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
@@ -33,9 +32,6 @@ class _EventSocketsViewState extends State<EventSocketsView> {
   }
 
   dynamic defaultParamList = <String, dynamic>{
-    'auth': {
-      'token': '',
-    },
     'transports': ['websocket'],
     'autoConnect': true,
   };
@@ -146,6 +142,9 @@ class _EventSocketsViewState extends State<EventSocketsView> {
                         themeColor: Colors.grey.shade300,
                         onChanged: (value) {
                           // Do something
+                          setState(() {
+                            updateJsonData(defaultParamList, value);
+                          });
                         },
                         json: jsonEncode(defaultParamList),
                       ),
@@ -227,6 +226,18 @@ class _EventSocketsViewState extends State<EventSocketsView> {
         },
       ),
     );
+  }
+
+  void updateJsonData(Map<String, dynamic> original, Map<dynamic, dynamic> updates) {
+    updates.forEach((key, value) {
+      if (value is Map && original[key] is Map) {
+        // If both original and new value are maps, recursively merge
+        updateJsonData(original[key], value);
+      } else {
+        // Otherwise, just update the value
+        original[key] = value;
+      }
+    });
   }
 
   List<Widget> buildKeyValueWidgets(Map<String, dynamic> map) {

@@ -36,9 +36,10 @@ class EventSocketsBloc extends Bloc<EventSocketsEvent, EventSocketsState> {
   }
 
   _handleConnect(ConnectRequested event, Emitter<EventSocketsState> emit) {
+    _repository = EventSocketsRepoImpl(event.socketUrl, event.sockedConfigurations);
     try {
       emit(EventSocketsConnecting());
-      _repository = EventSocketsRepoImpl(event.socketUrl, event.sockedConfigurations);
+
       _repository.connectToSocket();
 
       _messageSubscription = _repository.messages.listen(
@@ -61,10 +62,14 @@ class EventSocketsBloc extends Bloc<EventSocketsEvent, EventSocketsState> {
   }
 
   Future<void> _onDisconnectRequested(DisconnectRequested event, Emitter<EventSocketsState> emit) async {
-    _repository.disconnect();
-    _messages.clear();
-    await _messageSubscription?.cancel();
-    emit(EventSocketsDisconnected());
+    try {
+      _repository.disconnect();
+      _messages.clear();
+      await _messageSubscription?.cancel();
+      emit(EventSocketsDisconnected());
+    } catch (e) {
+      emit(EventSocketsError(error: e.toString()));
+    }
   }
 
   Future<void> _onSendMessageSent(SendMessageRequested event, Emitter<EventSocketsState> emit) async {

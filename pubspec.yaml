@@ -23,6 +23,7 @@ dependencies:
 
   # network connection
   web_socket_channel: ^3.0.2
+  socket_io_client: ^3.0.2
 
   # screen and utils
   bitsdojo_window: ^0.1.6

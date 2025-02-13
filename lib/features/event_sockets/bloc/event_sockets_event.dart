@@ -19,8 +19,9 @@ class ConnectRequested extends EventSocketsEvent {
 class DisconnectRequested extends EventSocketsEvent {}
 
 class SendMessageRequested extends EventSocketsEvent {
-  final String message;
-  const SendMessageRequested({required this.message});
+  final String event;
+  final dynamic message;
+  const SendMessageRequested({required this.message, required this.event});
 
   @override
   List<Object?> get props => [message];

@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:json_editor_flutter/json_editor_flutter.dart';
 import 'package:socket_probe/common/utils/dialogs.dart';
 import 'package:socket_probe/common/utils/validators.dart';
 import 'package:socket_probe/common/widgets/app_button.dart';
@@ -19,6 +23,8 @@ class _EventSocketsViewState extends State<EventSocketsView> {
   late EventSocketsBloc socketBloc;
 
   final _formKey = GlobalKey<FormState>();
+
+  final paramScrollController = ScrollController();
 
   @override
   void initState() {
@@ -64,16 +70,23 @@ class _EventSocketsViewState extends State<EventSocketsView> {
                         hintText: "https://testsocket.net OR wss://testsocket.net",
                         outerTitle: "Socket URL (https/http/wss/ws protocols)",
                         controller: socketBloc.socketTextController,
-                        validator: (val) {
-                          if (val != null && !Validators.isValidHttpUrl(val)) return 'Provide a valid/supported URL';
-                          return null;
-                        },
+                        validator: connected
+                            ? null
+                            : (val) {
+                                if (val != null && !Validators.isValidHttpUrl(val)) {
+                                  return 'Provide a valid/supported URL';
+                                }
+
+                                return null;
+                              },
                         suffixIcon: SizedBox(
                           width: size.width * 0.15,
                           child: AppButton(
                             bgColor: connected ? Colors.red : Colors.green,
                             onPressed: () {
-                              if (!(_formKey.currentState?.validate() ?? false)) return;
+                              if (!connected) {
+                                if (!(_formKey.currentState?.validate() ?? false)) return;
+                              }
 
                               if (connected) {
                                 socketBloc.add(DisconnectRequested());
@@ -108,13 +121,89 @@ class _EventSocketsViewState extends State<EventSocketsView> {
                       ],
                     ),
 
+                    // socket params
+                    if (!connected)
+                      Row(
+                        spacing: 10,
+                        children: [
+                          Icon(Iconsax.warning_2, color: Colors.amber),
+                          Text(
+                            "Check your socket parameters before connecting to websocket",
+                            style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    Container(
+                      width: size.width * 0.4,
+                      height: size.height * 0.2,
+                      color: Colors.grey.shade100,
+                      child: JsonEditor(
+                        enableKeyEdit: true,
+                        enableHorizontalScroll: true,
+                        enableValueEdit: true,
+                        enableMoreOptions: true,
+                        editors: [Editors.text, Editors.tree],
+                        themeColor: Colors.grey.shade300,
+                        onChanged: (value) {
+                          // Do something
+                        },
+                        json: jsonEncode(defaultParamList),
+                      ),
+                    ),
+
                     // input fields section
                     if (connected)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 10,
                         children: [
                           // textfield row
+                          SizedBox(
+                            width: size.width * 0.25,
+                            child: AppTextField(
+                              required: true,
+                              controller: socketBloc.eventTextController,
+                              outerTitle: "Event name (emit)",
+                              hintText: "Examples: connect, disconnect, messages.new, payment_status",
+                              validator: (val) {
+                                if (val == null || val.isEmpty) {
+                                  return "Please provide an event name";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
 
+                          // message box
+                          SizedBox(
+                            width: size.width * 0.45,
+                            child: AppTextField(
+                              maxLines: 4,
+                              required: true,
+                              controller: socketBloc.messageTextController,
+                              outerTitle: "Message",
+                              hintText: "Send your websocket message here",
+                              validator: (val) {
+                                if (val == null || val.isEmpty) {
+                                  return "Please attach a message";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: size.width * 0.1,
+                            child: AppButton(
+                              onPressed: () {
+                                if (!(_formKey.currentState?.validate() ?? false)) return;
+                                socketBloc.add(SendMessageRequested(
+                                  message: socketBloc.messageTextController.text,
+                                  event: socketBloc.eventTextController.text,
+                                ));
+                              },
+                              content: Text("Send"),
+                            ),
+                          ),
                           // display response messages
                           SizedBox(height: 20),
                           Container(
@@ -138,5 +227,26 @@ class _EventSocketsViewState extends State<EventSocketsView> {
         },
       ),
     );
+  }
+
+  List<Widget> buildKeyValueWidgets(Map<String, dynamic> map) {
+    List<Widget> widgets = [];
+
+    map.forEach((key, value) {
+      if (value is Map) {
+        // If value is a nested Map, recursively render it
+        widgets.add(Text('$key:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)));
+        widgets.addAll(buildKeyValueWidgets(Map<String, dynamic>.from(value)));
+      } else if (value is List) {
+        // If value is a List, display all its items
+        widgets.add(Text('$key:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)));
+        widgets.addAll(value.map((item) => Text('- $item')).toList());
+      } else {
+        // Display key-value pair for other types
+        widgets.add(Text('$key: $value', style: TextStyle(fontSize: 13)));
+      }
+    });
+
+    return widgets;
   }
 }

@@ -29,6 +29,7 @@ dependencies:
   bitsdojo_window: ^0.1.6
   intl: ^0.20.2
   logger: ^2.5.0
+  json_editor_flutter: ^1.4.2
 
   get_it: ^8.0.3
   regex_router: ^2.0.2
@@ -47,9 +48,9 @@ flutter:
   # assets:
   #   - images/
 
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/Lato/Lato-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic

@@ -15,6 +15,9 @@ class EventSocketsBloc extends Bloc<EventSocketsEvent, EventSocketsState> {
 
   final socketTextController = TextEditingController();
 
+  final eventTextController = TextEditingController();
+  final messageTextController = TextEditingController();
+
   EventSocketsBloc() : super(EventSocketsInitial()) {
     // handle socket connection
     on<ConnectRequested>(_handleConnect);
@@ -66,8 +69,8 @@ class EventSocketsBloc extends Bloc<EventSocketsEvent, EventSocketsState> {
 
   Future<void> _onSendMessageSent(SendMessageRequested event, Emitter<EventSocketsState> emit) async {
     try {
-      _repository.sendEventMessage(event.message);
-      // Optionally, log the sent message.
+      _repository.sendEventMessage(event.event, event.message);
+      // Log the sent message.
       _messages.add("Sent: ${event.message}");
       emit(EventSocketsConnected(messages: List.from(_messages)));
     } catch (e) {

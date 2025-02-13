@@ -42,7 +42,7 @@ class AppTheme {
   );
 }
 
-String fontName = "";
+String fontName = "Lato";
 
 TextTheme buildTextTheme(TextTheme base) {
   return TextTheme(

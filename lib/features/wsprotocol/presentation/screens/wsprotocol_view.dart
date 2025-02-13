@@ -62,6 +62,7 @@ class _WsprotocolViewState extends State<WsprotocolView> {
                         suffixIcon: SizedBox(
                           width: size.width * 0.15,
                           child: AppButton(
+                            bgColor: connected ? Colors.red : null,
                             onPressed: () {
                               if (!(_formKey.currentState?.validate() ?? false)) return;
 

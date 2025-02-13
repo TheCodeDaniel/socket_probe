@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:socket_probe/features/event_sockets/presentation/screens/event_sockets_view.dart';
 import 'package:socket_probe/features/wsprotocol/presentation/screens/wsprotocol_view.dart';
 
 class DashboardView extends StatefulWidget {
@@ -43,7 +44,7 @@ class _DashboardViewState extends State<DashboardView> {
               physics: NeverScrollableScrollPhysics(),
               children: [
                 WsprotocolView(),
-                Container(),
+                EventSocketsView(),
               ],
             ),
           ),

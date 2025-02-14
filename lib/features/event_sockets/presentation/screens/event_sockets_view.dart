@@ -1,8 +1,9 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:json_editor_flutter/json_editor_flutter.dart';
+import 'package:json_editor/json_editor.dart';
 import 'package:socket_probe/common/utils/dialogs.dart';
 import 'package:socket_probe/common/utils/validators.dart';
 import 'package:socket_probe/common/widgets/app_button.dart';
@@ -31,9 +32,10 @@ class _EventSocketsViewState extends State<EventSocketsView> {
     super.initState();
   }
 
-  dynamic defaultParamList = <String, dynamic>{
-    'transports': ['websocket'],
-    'autoConnect': true,
+  Map<String, dynamic> defaultParamListString = {
+    "auth": {"token": "userToken"},
+    "transports": ["websocket"],
+    "autoConnect": true,
   };
 
   @override
@@ -90,7 +92,7 @@ class _EventSocketsViewState extends State<EventSocketsView> {
                               }
                               socketBloc.add(ConnectRequested(
                                 socketUrl: socketBloc.socketTextController.text,
-                                sockedConfigurations: defaultParamList,
+                                sockedConfigurations: defaultParamListString,
                               ));
                             },
                             content: isLoading
@@ -132,21 +134,29 @@ class _EventSocketsViewState extends State<EventSocketsView> {
                     Container(
                       width: size.width * 0.4,
                       height: size.height * 0.2,
+                      padding: EdgeInsets.symmetric(horizontal: 20),
                       color: Colors.grey.shade100,
-                      child: JsonEditor(
-                        enableKeyEdit: true,
-                        enableHorizontalScroll: true,
-                        enableValueEdit: true,
-                        enableMoreOptions: true,
-                        editors: [Editors.text, Editors.tree],
-                        themeColor: Colors.grey.shade300,
-                        onChanged: (value) {
-                          // Do something
-                          setState(() {
-                            updateJsonData(defaultParamList, value);
-                          });
-                        },
-                        json: jsonEncode(defaultParamList),
+                      child: JsonEditorTheme(
+                        themeData: JsonEditorThemeData(
+                          lightTheme: JsonTheme(),
+                        ),
+                        child: JsonEditor.object(
+                          enabled: !connected,
+                          object: defaultParamListString,
+                          onValueChanged: (JsonElement value) {
+                            String prettyString = value.toPrettyString();
+                            Map<String, dynamic> formattedPretty = json.decode(prettyString);
+                            print(formattedPretty);
+
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              setState(() {
+                                defaultParamListString = Map<String, Object>.from(formattedPretty);
+                              });
+                            });
+
+                            print("Default Param $defaultParamListString");
+                          },
+                        ),
                       ),
                     ),
 
@@ -226,38 +236,5 @@ class _EventSocketsViewState extends State<EventSocketsView> {
         },
       ),
     );
-  }
-
-  void updateJsonData(Map<String, dynamic> original, Map<dynamic, dynamic> updates) {
-    updates.forEach((key, value) {
-      if (value is Map && original[key] is Map) {
-        // If both original and new value are maps, recursively merge
-        updateJsonData(original[key], value);
-      } else {
-        // Otherwise, just update the value
-        original[key] = value;
-      }
-    });
-  }
-
-  List<Widget> buildKeyValueWidgets(Map<String, dynamic> map) {
-    List<Widget> widgets = [];
-
-    map.forEach((key, value) {
-      if (value is Map) {
-        // If value is a nested Map, recursively render it
-        widgets.add(Text('$key:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)));
-        widgets.addAll(buildKeyValueWidgets(Map<String, dynamic>.from(value)));
-      } else if (value is List) {
-        // If value is a List, display all its items
-        widgets.add(Text('$key:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)));
-        widgets.addAll(value.map((item) => Text('- $item')).toList());
-      } else {
-        // Display key-value pair for other types
-        widgets.add(Text('$key: $value', style: TextStyle(fontSize: 13)));
-      }
-    });
-
-    return widgets;
   }
 }

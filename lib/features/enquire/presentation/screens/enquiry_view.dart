@@ -41,7 +41,7 @@ class EnquiryView extends StatelessWidget {
             spacing: 10,
             children: [
               Text(
-                "Experienced a bug or you want to drop yoursgm",
+                "Experienced a bug or you want to drop your suggestion ?",
                 style: TextStyle(fontSize: 18),
               ),
               ElevatedButton(

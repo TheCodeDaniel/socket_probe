@@ -22,14 +22,18 @@ dependencies:
 
   # network connection
   web_socket_channel: ^3.0.2
+  socket_io_client: ^3.0.2
 
   # screen and utils
   bitsdojo_window: ^0.1.6
   intl: ^0.20.2
-  logger: ^2.5.0
+  json_editor: ^0.0.8
 
   get_it: ^8.0.3
   regex_router: ^2.0.2
+  iconsax: ^0.0.8
+  url_launcher: ^6.3.1
+ 
 
 dev_dependencies:
   flutter_test:
@@ -43,9 +47,9 @@ flutter:
   # assets:
   #   - images/
 
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/Lato/Lato-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic

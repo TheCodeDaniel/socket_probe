@@ -1,3 +1,4 @@
 class RouteNames {
-  static final String initialRoute = '/';
+  static final String initialPage = '/';
+  static final String dashboard = '/dashbaord';
 }

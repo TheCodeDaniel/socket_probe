@@ -61,8 +61,6 @@ flutter:
     - assets/images/
 
   fonts:
-    - family: Lato
+    - family: Nunito
       fonts:
-        - asset: assets/fonts/Lato/Lato-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+        - asset: assets/fonts/Nunito/static/Nunito-Regular.ttf

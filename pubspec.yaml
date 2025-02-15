@@ -17,7 +17,6 @@ dependencies:
 
   # state management
   flutter_bloc: ^9.0.0
-  bloc_test: ^10.0.0
   equatable: ^2.0.7
 
   # network connection
@@ -33,9 +32,12 @@ dependencies:
   regex_router: ^2.0.2
   iconsax: ^0.0.8
   url_launcher: ^6.3.1
+
+  mocktail: ^1.0.4
  
 
 dev_dependencies:
+  bloc_test: ^10.0.0
   flutter_test:
     sdk: flutter
 

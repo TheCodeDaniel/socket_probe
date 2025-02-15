@@ -36,9 +36,11 @@ class NavigationMenu extends StatelessWidget {
                   selectedIndex: state,
                   onDestinationSelected: (value) => context.read<NavigationCubit>().changeTabIndex(value),
                 ),
-                IndexedStack(
-                  index: state,
-                  children: context.read<NavigationCubit>().navigationPages,
+                Expanded(
+                  child: IndexedStack(
+                    index: state,
+                    children: context.read<NavigationCubit>().navigationPages,
+                  ),
                 )
               ],
             ),

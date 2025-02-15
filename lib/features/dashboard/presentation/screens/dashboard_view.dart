@@ -38,8 +38,8 @@ class _DashboardViewState extends State<DashboardView> {
             ),
           ),
           SizedBox(
-            width: size.width * 0.85,
-            height: size.height * 0.85,
+            width: size.width * 0.8,
+            height: size.height * 0.9,
             child: TabBarView(
               physics: NeverScrollableScrollPhysics(),
               children: [

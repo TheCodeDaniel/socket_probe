@@ -39,6 +39,11 @@ class AppTheme {
 
     /// Text
     textTheme: buildTextTheme(ThemeData.light().textTheme),
+
+    /// Switch
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStatePropertyAll<Color>(Colors.indigo),
+    ),
   );
 }
 

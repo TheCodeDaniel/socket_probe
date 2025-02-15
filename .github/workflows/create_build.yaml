@@ -1,0 +1,52 @@
+name: Build and Deploy to Cloudflare R2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest # For macOS, use 'macos-latest'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build macOS app
+        run: flutter build macos
+
+      - name: Build Windows app
+        run: flutter build windows
+
+      - name: Upload macOS build to Cloudflare R2
+        run: |
+          sudo apt install awscli
+          aws configure set aws_access_key_id ${{ secrets.R2_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          aws configure set default.region auto
+
+          aws s3 cp --endpoint-url=https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com \
+            build/macos/Build/Products/Release/MyApp.dmg s3://${{ secrets.R2_BUCKET_NAME }}/macos/MyApp.dmg --acl public-read
+
+          echo "✅ macOS build uploaded!"
+
+      - name: Upload Windows build to Cloudflare R2
+        run: |
+          aws s3 cp --endpoint-url=https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com \
+            build/windows/runner/Release/MyApp.exe s3://${{ secrets.R2_BUCKET_NAME }}/windows/MyApp.exe --acl public-read
+
+          echo "✅ Windows build uploaded!"
+
+      - name: Generate Public Links
+        run: |
+          echo "Download macOS App: https://${{ secrets.R2_ACCOUNT_ID }}.r2.dev/${{ secrets.R2_BUCKET_NAME }}/macos/MyApp.dmg"
+          echo "Download Windows App: https://${{ secrets.R2_ACCOUNT_ID }}.r2.dev/${{ secrets.R2_BUCKET_NAME }}/windows/MyApp.exe"

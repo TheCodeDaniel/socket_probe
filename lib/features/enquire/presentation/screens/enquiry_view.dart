@@ -10,7 +10,7 @@ class EnquiryView extends StatelessWidget {
       padding: EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 10,
+        spacing: 20,
         children: [
           Text(
             "Welcome to Socket Probe 🔌",
@@ -20,6 +20,12 @@ class EnquiryView extends StatelessWidget {
             "Using socket probe can help you easily test your websocket connect, it does not matter the kind of developer you are",
             style: TextStyle(fontSize: 18),
           ),
+          GestureDetector(
+              onTap: () => launchUrl(Uri.parse("https://socket-probe.web.app")),
+              child: Text(
+                "Visit our website",
+                style: TextStyle(color: Colors.indigo, decoration: TextDecoration.underline, fontSize: 20),
+              )),
           Row(
             spacing: 10,
             children: [

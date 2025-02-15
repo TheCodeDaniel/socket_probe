@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
@@ -135,26 +134,24 @@ class _EventSocketsViewState extends State<EventSocketsView> {
                       width: size.width * 0.4,
                       height: size.height * 0.2,
                       padding: EdgeInsets.symmetric(horizontal: 20),
-                      color: Colors.grey.shade100,
+                      color: Colors.grey.shade200,
                       child: JsonEditorTheme(
-                        themeData: JsonEditorThemeData(
-                          lightTheme: JsonTheme(),
-                        ),
+                        themeData: JsonEditorThemeData(lightTheme: JsonTheme.light()),
                         child: JsonEditor.object(
                           enabled: !connected,
                           object: defaultParamListString,
                           onValueChanged: (JsonElement value) {
                             String prettyString = value.toPrettyString();
                             Map<String, dynamic> formattedPretty = json.decode(prettyString);
-                            print(formattedPretty);
+                            Map<String, dynamic> convertedFormat = Map<String, dynamic>.from(formattedPretty);
+                            // Sanitize before updating state
+                            convertedFormat = sanitizeJson(convertedFormat);
 
                             WidgetsBinding.instance.addPostFrameCallback((_) {
                               setState(() {
-                                defaultParamListString = Map<String, Object>.from(formattedPretty);
+                                defaultParamListString = convertedFormat;
                               });
                             });
-
-                            print("Default Param $defaultParamListString");
                           },
                         ),
                       ),
@@ -187,7 +184,7 @@ class _EventSocketsViewState extends State<EventSocketsView> {
                           SizedBox(
                             width: size.width * 0.45,
                             child: AppTextField(
-                              maxLines: 4,
+                              maxLines: 2,
                               required: true,
                               controller: socketBloc.messageTextController,
                               outerTitle: "Message",
@@ -236,5 +233,18 @@ class _EventSocketsViewState extends State<EventSocketsView> {
         },
       ),
     );
+  }
+
+  Map<String, dynamic> sanitizeJson(Map<String, dynamic> input) {
+    input.forEach((key, value) {
+      if (value is List) {
+        // Convert List<dynamic> to List<String>
+        input[key] = value.map((e) => e.toString()).toList();
+      } else if (value is Map<String, dynamic>) {
+        // Recursively clean nested maps
+        input[key] = sanitizeJson(value);
+      }
+    });
+    return input;
   }
 }

@@ -47,7 +47,7 @@ class AppTheme {
   );
 }
 
-String fontName = "Lato";
+String fontName = "Nunito";
 
 TextTheme buildTextTheme(TextTheme base) {
   return TextTheme(

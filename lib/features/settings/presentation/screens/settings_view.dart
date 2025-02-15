@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
@@ -11,14 +12,21 @@ class SettingsView extends StatelessWidget {
       child: SizedBox(
         width: size.width * 0.4,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 20,
           children: [
-            Text(
-              "Hi there, nothing here at the moment :)..... but there will be content soon enough",
-              style: TextStyle(
-                fontSize: 20,
+            Text("Settings", style: TextStyle(fontSize: 30)),
+            ListTile(
+              leading: Icon(Iconsax.moon),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              tileColor: Colors.indigo.withValues(alpha: 0.2),
+              title: Text("Dark Mode"),
+              subtitle: Text("Coming soon .."),
+              trailing: Switch(
+                value: false,
+                onChanged: (value) {},
               ),
-            ),
+            )
           ],
         ),
       ),

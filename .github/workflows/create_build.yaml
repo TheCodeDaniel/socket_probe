@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  build-and-upload:
-    runs-on: ubuntu-latest # For macOS, use 'macos-latest'
+  build-macos:
+    runs-on: macos-latest # ✅ Use macOS runner for macOS builds
 
     steps:
       - name: Checkout code
@@ -24,12 +24,9 @@ jobs:
       - name: Build macOS app
         run: flutter build macos
 
-      - name: Build Windows app
-        run: flutter build windows
-
       - name: Upload macOS build to Cloudflare R2
         run: |
-          sudo apt install awscli
+          brew install awscli  # ✅ Install AWS CLI for macOS
           aws configure set aws_access_key_id ${{ secrets.R2_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.R2_SECRET_ACCESS_KEY }}
           aws configure set default.region auto
@@ -39,13 +36,40 @@ jobs:
 
           echo "✅ macOS build uploaded!"
 
+  build-windows:
+    runs-on: windows-latest # ✅ Use Windows runner for Windows builds
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.0"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Windows app
+        run: flutter build windows
+
       - name: Upload Windows build to Cloudflare R2
         run: |
+          choco install awscli  # ✅ Install AWS CLI for Windows
+          aws configure set aws_access_key_id ${{ secrets.R2_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          aws configure set default.region auto
+
           aws s3 cp --endpoint-url=https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com \
             build/windows/runner/Release/MyApp.exe s3://${{ secrets.R2_BUCKET_NAME }}/windows/MyApp.exe --acl public-read
 
           echo "✅ Windows build uploaded!"
 
+  generate-links:
+    runs-on: ubuntu-latest # ✅ Use Ubuntu for generating download links
+
+    steps:
       - name: Generate Public Links
         run: |
           echo "Download macOS App: https://${{ secrets.R2_ACCOUNT_ID }}.r2.dev/${{ secrets.R2_BUCKET_NAME }}/macos/MyApp.dmg"

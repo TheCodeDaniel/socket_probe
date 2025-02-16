@@ -8,7 +8,11 @@ import 'package:socket_probe/features/event_sockets/bloc/event_sockets_state.dar
 import 'package:socket_probe/features/event_sockets/data/repository/event_sockets_repo_impl.dart';
 
 class EventSocketsBloc extends Bloc<EventSocketsEvent, EventSocketsState> {
-  late EventSocketsRepoImpl _repository;
+  EventSocketsRepoImpl _repository = EventSocketsRepoImpl("wss://echo.websocket.events", {
+    "auth": {"token": "userToken"},
+    "transports": ["websocket"],
+    "autoConnect": true,
+  });
 
   StreamSubscription? _messageSubscription;
   final List<dynamic> _messages = [];
@@ -36,9 +40,9 @@ class EventSocketsBloc extends Bloc<EventSocketsEvent, EventSocketsState> {
   }
 
   _handleConnect(ConnectRequested event, Emitter<EventSocketsState> emit) {
-    _repository = EventSocketsRepoImpl(event.socketUrl, event.sockedConfigurations);
     try {
       emit(EventSocketsConnecting());
+      _repository = EventSocketsRepoImpl(event.socketUrl, event.sockedConfigurations);
 
       _repository.connectToSocket();
 
@@ -84,9 +88,13 @@ class EventSocketsBloc extends Bloc<EventSocketsEvent, EventSocketsState> {
   }
 
   Future<void> _onMessageReceived(MessageReceived event, Emitter<EventSocketsState> emit) async {
-    // Log the incoming message.
-    _messages.add("Received: ${event.message}");
-    emit(EventSocketsConnected(messages: List.from(_messages)));
+    try {
+      // Log the incoming message.
+      _messages.add("Received: ${event.message}");
+      emit(EventSocketsConnected(messages: List.from(_messages)));
+    } catch (e) {
+      emit(EventSocketsError(error: e.toString()));
+    }
   }
 
   Future<void> _onConnectionErrorOccurred(ConnectionErrorOccurred event, Emitter<EventSocketsState> emit) async {

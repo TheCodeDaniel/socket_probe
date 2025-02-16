@@ -7,7 +7,7 @@ class EventSocketsRepoImpl {
   final String socketUrl;
   final dynamic socketOpts;
 
-  late sio.Socket socket;
+  sio.Socket? socket;
 
   // A broadcast controller lets multiple listeners receive the stream of messages.
   final StreamController<dynamic> _messageController = StreamController<dynamic>.broadcast();
@@ -21,23 +21,23 @@ class EventSocketsRepoImpl {
       // Connect to the Socket.IO server
       socket = sio.io(url, socketOpts);
 
-      socket.on('connect', (message) {
+      socket?.on('connect', (message) {
         // socket.subEvents();
         _messageController.add(message);
         log('Connected to server');
       });
 
-      socket.onAny((event, data) {
+      socket?.onAny((event, data) {
         _messageController.add(data);
         log("event name: $event, event data: $data");
       });
 
-      socket.onError((data) {
+      socket?.onError((data) {
         _messageController.addError(data);
         log("connection error: $data");
       });
 
-      socket.onConnectError((data) {
+      socket?.onConnectError((data) {
         _messageController.addError(data);
         log("connection error: $data");
       });
@@ -49,16 +49,18 @@ class EventSocketsRepoImpl {
   Stream<dynamic> get messages => _messageController.stream;
 
   void sendEventMessage(String event, [dynamic data]) {
-    if (socket.connected) {
-      socket.emit(event, data);
+    if (socket == null) return;
+    if (socket?.connected ?? false) {
+      socket?.emit(event, data);
     } else {
       throw Exception("WebSocket connection is not established. Call connect() first.");
     }
   }
 
   void disconnect() {
-    if (socket.connected) {
-      socket.disconnect();
+    if (socket == null) return;
+    if (socket?.connected ?? false) {
+      socket?.disconnect();
       log('disconnected from server');
     }
   }

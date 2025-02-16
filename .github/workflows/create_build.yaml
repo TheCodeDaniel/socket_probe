@@ -44,7 +44,7 @@ jobs:
 
       #     echo "✅ macOS build uploaded!"
 
-      - name: Upload macOS build to Cloudflare R2
+       - name: Upload macOS build to Cloudflare R2 (using put-object)
         env:
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
@@ -54,14 +54,15 @@ jobs:
           aws configure set aws_secret_access_key ${{ secrets.R2_SECRET_ACCESS_KEY }}
           aws configure set default.region auto
 
-          # Force a single-part upload by setting the multipart threshold very high
-          export AWS_S3_MULTIPART_THRESHOLD=100GB
-
-          aws s3 cp --endpoint-url=https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
-            build/macos/Build/Products/Release/Socket_Probe.zip \
-            s3://${{ secrets.R2_BUCKET_NAME }}/macos/Socket_Probe.zip --acl public-read
+          aws s3api put-object \
+            --bucket "${{ secrets.R2_BUCKET_NAME }}" \
+            --key "macos/Socket_Probe.zip" \
+            --body "build/macos/Build/Products/Release/Socket_Probe.zip" \
+            --acl public-read \
+            --endpoint-url "https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
 
           echo "✅ macOS build uploaded!"
+
 
   build-windows:
     runs-on: windows-latest # ✅ Use Windows runner for Windows builds

@@ -44,7 +44,7 @@ jobs:
 
       #     echo "✅ macOS build uploaded!"
 
-       - name: Upload macOS build to Cloudflare R2 (using put-object)
+      - name: Upload macOS build to Cloudflare R2 (using put-object)
         env:
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
@@ -62,7 +62,6 @@ jobs:
             --endpoint-url "https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
 
           echo "✅ macOS build uploaded!"
-
 
   build-windows:
     runs-on: windows-latest # ✅ Use Windows runner for Windows builds

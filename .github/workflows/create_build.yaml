@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macos-latest # ✅ Use macOS runner for macOS builds
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
@@ -25,13 +25,16 @@ jobs:
         run: flutter build macos
 
       - name: Upload macOS build to Cloudflare R2
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
         run: |
           brew install awscli  # ✅ Install AWS CLI for macOS
           aws configure set aws_access_key_id ${{ secrets.R2_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.R2_SECRET_ACCESS_KEY }}
           aws configure set default.region auto
 
-          aws s3 cp --endpoint-url=https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com \
+          aws s3 cp --endpoint-url=https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
             build/macos/Build/Products/Release/MyApp.dmg s3://${{ secrets.R2_BUCKET_NAME }}/macos/MyApp.dmg --acl public-read
 
           echo "✅ macOS build uploaded!"

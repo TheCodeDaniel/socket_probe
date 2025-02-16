@@ -39,8 +39,11 @@ jobs:
           aws configure set aws_secret_access_key ${{ secrets.R2_SECRET_ACCESS_KEY }}
           aws configure set default.region auto
 
+          # Force multipart upload with 64MB chunk size
           aws s3 cp --endpoint-url=https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
-            build/macos/Build/Products/Release/Socket_Probe.zip s3://${{ secrets.R2_BUCKET_NAME }}/macos/Socket_Probe.zip --acl public-read
+            build/macos/Build/Products/Release/Socket_Probe.zip s3://${{ secrets.R2_BUCKET_NAME }}/macos/Socket_Probe.zip \
+            --acl public-read --expected-size=$(stat -c%s "build/macos/Build/Products/Release/Socket_Probe.zip") \
+            --multipart-chunksize 64MB
 
           echo "✅ macOS build uploaded!"
 

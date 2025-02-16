@@ -10,7 +10,7 @@ class WsprotocolBloc extends Bloc<WsprotocolEvent, WsprotocolState> {
   TextEditingController wssTextController = TextEditingController();
   TextEditingController randomStringController = TextEditingController();
 
-  late WsprotocolRepoImpl repository;
+  WsprotocolRepoImpl repository = WsprotocolRepoImpl('wss://echo.websocket.events');
   StreamSubscription? _messageSubscription;
   final List<dynamic> _messages = [];
 
@@ -32,7 +32,7 @@ class WsprotocolBloc extends Bloc<WsprotocolEvent, WsprotocolState> {
   Future<void> _onConnectRequested(ConnectRequested event, Emitter<WsprotocolState> emit) async {
     emit(WsprotocolConnecting());
     try {
-      repository = WsprotocolRepoImpl(wssTextController.text);
+      repository = WsprotocolRepoImpl(event.socketUrl);
       repository.connect();
       // Listen for messages from the repository.
       _messageSubscription = repository.messages.listen(
@@ -55,10 +55,14 @@ class WsprotocolBloc extends Bloc<WsprotocolEvent, WsprotocolState> {
   }
 
   Future<void> _onDisconnectRequested(DisconnectRequested event, Emitter<WsprotocolState> emit) async {
-    repository.disconnect();
-    _messages.clear();
-    await _messageSubscription?.cancel();
-    emit(WsprotocolDisconnected());
+    try {
+      repository.disconnect();
+      _messages.clear();
+      await _messageSubscription?.cancel();
+      emit(WsprotocolDisconnected());
+    } catch (e) {
+      emit(WsprotocolError(e.toString()));
+    }
   }
 
   Future<void> _onSendMessageRequested(SendMessageRequested event, Emitter<WsprotocolState> emit) async {
@@ -83,9 +87,13 @@ class WsprotocolBloc extends Bloc<WsprotocolEvent, WsprotocolState> {
   }
 
   Future<void> _onMessageReceived(MessageReceived event, Emitter<WsprotocolState> emit) async {
-    // Log the incoming message.
-    _messages.add("Received: ${event.message}");
-    emit(WsprotocolConnected(messages: List.from(_messages)));
+    try {
+      // Log the incoming message.
+      _messages.add("Received: ${event.message}");
+      emit(WsprotocolConnected(messages: List.from(_messages)));
+    } catch (e) {
+      emit(WsprotocolError(e.toString()));
+    }
   }
 
   Future<void> _onConnectionErrorOccurred(ConnectionErrorOccurred event, Emitter<WsprotocolState> emit) async {

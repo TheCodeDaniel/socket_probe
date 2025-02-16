@@ -1,93 +1,65 @@
-// import 'package:bloc_test/bloc_test.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:mocktail/mocktail.dart';
-// import 'package:socket_probe/features/wsprotocol/bloc/wsprotocol_bloc.dart';
-// import 'package:socket_probe/features/wsprotocol/bloc/wsprotocol_event.dart';
-// import 'package:socket_probe/features/wsprotocol/bloc/wsprotocol_state.dart';
-// import 'package:socket_probe/features/wsprotocol/data/repository/wsprotocol_repo_impl.dart';
-// import 'dart:async';
+import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:socket_probe/features/wsprotocol/bloc/wsprotocol_bloc.dart';
+import 'package:socket_probe/features/wsprotocol/bloc/wsprotocol_event.dart';
+import 'package:socket_probe/features/wsprotocol/bloc/wsprotocol_state.dart';
 
-// class MockWsprotocolRepo extends Mock implements WsprotocolRepoImpl {
-//   @override
-//   void connect() {
-//     // Do nothing to avoid real WebSocket initialization
-//   }
-// }
+void main() {
+  group(WsprotocolBloc, () {
+    late WsprotocolBloc wsprotocolBloc;
 
-// void main() {
-//   late WsprotocolBloc bloc;
-//   late MockWsprotocolRepo mockRepo;
-//   late StreamController<dynamic> messageController;
+    setUp(() {
+      wsprotocolBloc = WsprotocolBloc();
+    });
 
-//   setUp(() {
-//     mockRepo = MockWsprotocolRepo();
-//     messageController = StreamController<dynamic>.broadcast();
+    blocTest(
+      'This test the websocket connection when ConnectedRequest is added',
+      build: () => wsprotocolBloc,
+      act: (bloc) => bloc.add(ConnectRequested(socketUrl: 'wss://echo.websocket.events')),
+      expect: () => [
+        isA<WsprotocolConnecting>(),
+        isA<WsprotocolConnected>(),
+      ],
+    );
 
-//     // Stub repository methods
-//     when(() => mockRepo.messages).thenAnswer((_) => messageController.stream);
-//     when(() => mockRepo.connect()).thenReturn(null);
-//     when(() => mockRepo.disconnect()).thenReturn(null);
+    blocTest(
+      'This test the websocket when DisconnectRequest is added',
+      build: () => wsprotocolBloc,
+      act: (bloc) => bloc.add(DisconnectRequested()),
+      expect: () => [
+        isA<WsprotocolDisconnected>(),
+      ],
+    );
 
-//     bloc = WsprotocolBloc(repo: mockRepo); // Inject mock repository
-//   });
+    blocTest(
+      'This test the websocket when SendMessageRequest is added',
+      build: () => wsprotocolBloc,
+      act: (bloc) => bloc.add(SendMessageRequested("Send Message Requested")),
+      expect: () => [
+        isA<WsprotocolConnected>(),
+      ],
+    );
 
-//   tearDown(() {
-//     bloc.close();
-//     messageController.close();
-//   });
+    blocTest(
+      'This test the websocket when MessageReceived is added',
+      build: () => wsprotocolBloc,
+      act: (bloc) => bloc.add(MessageReceived('Message Received')),
+      expect: () => [
+        isA<WsprotocolConnected>(),
+      ],
+    );
 
-//   test('initial state is WsprotocolInitial', () {
-//     expect(bloc.state, WsprotocolInitial());
-//   });
+    blocTest(
+      'This test the websocket when ConnectionErrorOccurred is added',
+      build: () => wsprotocolBloc,
+      act: (bloc) => bloc.add(ConnectionErrorOccurred("Connect Error Occurred")),
+      expect: () => [
+        isA<WsprotocolError>(),
+      ],
+    );
 
-//   blocTest<WsprotocolBloc, WsprotocolState>(
-//     'emits [WsprotocolConnecting, WsprotocolConnected] when ConnectRequested is added',
-//     build: () {
-//       when(() => mockRepo.connect()).thenAnswer((_) {});
-//       return bloc;
-//     },
-//     act: (bloc) => bloc.add(ConnectRequested()),
-//     expect: () => [
-//       WsprotocolConnecting(),
-//       WsprotocolConnected(messages: []),
-//     ],
-//   );
-
-//   blocTest<WsprotocolBloc, WsprotocolState>(
-//     'emits [WsprotocolError] when connection fails',
-//     build: () {
-//       when(() => mockRepo.connect()).thenThrow(Exception("Connection failed"));
-//       return bloc;
-//     },
-//     act: (bloc) => bloc.add(ConnectRequested()),
-//     expect: () => [
-//       WsprotocolConnecting(),
-//       WsprotocolError("Exception: Connection failed"),
-//     ],
-//   );
-
-//   blocTest<WsprotocolBloc, WsprotocolState>(
-//     'emits [WsprotocolConnected] when a message is received',
-//     build: () {
-//       return bloc;
-//     },
-//     act: (bloc) {
-//       messageController.add("New message");
-//     },
-//     expect: () => [
-//       WsprotocolConnected(messages: ["Received: New message"]),
-//     ],
-//   );
-
-//   blocTest<WsprotocolBloc, WsprotocolState>(
-//     'emits [WsprotocolDisconnected] when DisconnectRequested is added',
-//     build: () {
-//       when(() => mockRepo.disconnect()).thenAnswer((_) {});
-//       return bloc;
-//     },
-//     act: (bloc) => bloc.add(DisconnectRequested()),
-//     expect: () => [
-//       WsprotocolDisconnected(),
-//     ],
-//   );
-// }
+    tearDown(() {
+      wsprotocolBloc.close();
+    });
+  });
+}

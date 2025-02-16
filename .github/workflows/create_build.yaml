@@ -54,9 +54,12 @@ jobs:
           aws configure set aws_secret_access_key ${{ secrets.R2_SECRET_ACCESS_KEY }}
           aws configure set default.region auto
 
-          # Force a single-part upload by disabling multipart
-          aws s3 cp --no-multipart --endpoint-url=https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
-            build/macos/Build/Products/Release/Socket_Probe.zip s3://${{ secrets.R2_BUCKET_NAME }}/macos/Socket_Probe.zip --acl public-read
+          # Force a single-part upload by setting the multipart threshold very high
+          export AWS_S3_MULTIPART_THRESHOLD=100GB
+
+          aws s3 cp --endpoint-url=https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
+            build/macos/Build/Products/Release/Socket_Probe.zip \
+            s3://${{ secrets.R2_BUCKET_NAME }}/macos/Socket_Probe.zip --acl public-read
 
           echo "✅ macOS build uploaded!"
 

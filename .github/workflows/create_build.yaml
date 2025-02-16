@@ -49,23 +49,14 @@ jobs:
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
         run: |
-          brew install awscli  # ✅ Install AWS CLI for macOS
+          brew install awscli  # Install AWS CLI for macOS
           aws configure set aws_access_key_id ${{ secrets.R2_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.R2_SECRET_ACCESS_KEY }}
           aws configure set default.region auto
 
-          # Set multipart upload environment variables
-          export AWS_MAX_ATTEMPTS=10
-          export AWS_S3_MULTIPART_THRESHOLD=64MB
-          export AWS_S3_MULTIPART_CHUNKSIZE=64MB
-
-          # Get file size (macOS-compatible)
-          FILE_SIZE=$(stat -f%z "build/macos/Build/Products/Release/Socket_Probe.zip")
-
-          # Upload file
-          aws s3 cp --endpoint-url=https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
-            build/macos/Build/Products/Release/Socket_Probe.zip s3://${{ secrets.R2_BUCKET_NAME }}/macos/Socket_Probe.zip \
-            --acl public-read --expected-size=$FILE_SIZE
+          # Force a single-part upload by disabling multipart
+          aws s3 cp --no-multipart --endpoint-url=https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com \
+            build/macos/Build/Products/Release/Socket_Probe.zip s3://${{ secrets.R2_BUCKET_NAME }}/macos/Socket_Probe.zip --acl public-read
 
           echo "✅ macOS build uploaded!"
 

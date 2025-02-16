@@ -70,7 +70,9 @@ class _WsprotocolViewState extends State<WsprotocolView> {
                                 protocolBloc.add(DisconnectRequested());
                                 return;
                               }
-                              protocolBloc.add(ConnectRequested());
+                              protocolBloc.add(ConnectRequested(
+                                socketUrl: protocolBloc.wssTextController.text
+                              ));
                             },
                             content: isLoading
                                 ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white))

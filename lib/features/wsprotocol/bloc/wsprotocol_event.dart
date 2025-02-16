@@ -9,7 +9,13 @@ abstract class WsprotocolEvent extends Equatable {
 }
 
 /// Event to initiate a connection.
-class ConnectRequested extends WsprotocolEvent {}
+class ConnectRequested extends WsprotocolEvent {
+  final String socketUrl;
+  const ConnectRequested({required this.socketUrl});
+
+  @override
+  List<Object?> get props => [socketUrl];
+}
 
 /// Event to close the connection.
 class DisconnectRequested extends WsprotocolEvent {}

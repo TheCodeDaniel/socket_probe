@@ -39,12 +39,14 @@ jobs:
           aws configure set aws_secret_access_key ${{ secrets.R2_SECRET_ACCESS_KEY }}
           aws configure set default.region auto
 
+          # Run the put-object command in debug mode
           aws s3api put-object \
             --bucket "${{ secrets.R2_BUCKET_NAME }}" \
             --key "macos/Socket_Probe.zip" \
             --body "build/macos/Build/Products/Release/Socket_Probe.zip" \
             --acl public-read \
-            --endpoint-url "https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+            --endpoint-url "https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com" \
+            --debug
 
           echo "✅ macOS build uploaded!"
 

@@ -29,7 +29,7 @@ jobs:
           cd build/macos/Build/Products/Release
           zip -r "Socket_Probe.zip" "Socket Probe.app"
 
-      - name: Upload macOS build to Cloudflare R2 (using put-object)
+      - name: Upload macOS build to Cloudflare R2 (using put-object and debug)
         env:
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}

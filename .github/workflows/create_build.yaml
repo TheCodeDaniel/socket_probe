@@ -45,7 +45,7 @@ jobs:
             --key "macos/Socket_Probe.zip" \
             --body "build/macos/Build/Products/Release/Socket_Probe.zip" \
             --acl public-read \
-            --endpoint-url "https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com" \
+            --endpoint-url "https://pub-6e37860d427d4ca69a176fe1bf8313b6.r2.dev" \
             --debug
 
           echo "✅ macOS build uploaded!"

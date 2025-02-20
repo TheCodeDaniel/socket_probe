@@ -89,12 +89,12 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.socket_probe" "\0"
-            VALUE "FileDescription", "Socket Probe" "\0"
+            VALUE "CompanyName", "com.socketprobe.socketProbe" "\0"
+            VALUE "FileDescription", "A software tool for testing websocket connections" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "socket_probe" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 com.socket_probe. All rights reserved." "\0"
-            VALUE "OriginalFilename", "socket_probe.exe" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 com.socketprobe.socketProbe. All rights reserved." "\0"
+            VALUE "OriginalFilename", "Socket_Probe.exe" "\0"
             VALUE "ProductName", "Socket Probe" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END

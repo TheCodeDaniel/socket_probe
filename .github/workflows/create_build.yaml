@@ -41,6 +41,8 @@ jobs:
 
   build-windows:
     runs-on: windows-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
@@ -57,11 +59,16 @@ jobs:
       - name: Build Windows app
         run: flutter build windows
 
+      - name: Package Windows app as a zip
+        run: |
+          cd build/windows/runner/Release
+          Compress-Archive -Path "Socket_Probe.exe" -DestinationPath "Socket_Probe_Windows.zip"
+
       - name: Upload Windows build to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
           tag_name: latest
-          files: build/windows/runner/Release/MyApp.exe
+          files: build/windows/runner/Release/Socket_Probe_Windows.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -71,5 +78,5 @@ jobs:
     steps:
       - name: Generate Public Links
         run: |
-          echo "Download macOS App: https://github.com/${{ github.repository }}/releases/latest/download/Socket_Probe.zip"
+          echo "Download macOS App: https://github.com/${{ github.repository }}/releases/latest/download/Socket_Probe_Macos.zip"
           echo "Download Windows App: https://github.com/${{ github.repository }}/releases/latest/download/MyApp.exe"

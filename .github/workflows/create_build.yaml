@@ -1,4 +1,4 @@
-name: Build and Deploy to Cloudflare R2
+name: Build and Deploy to GitHub Releases
 
 on:
   push:
@@ -29,29 +29,16 @@ jobs:
           cd build/macos/Build/Products/Release
           zip -r "Socket_Probe.zip" "Socket Probe.app"
 
-      - name: Upload macOS build to Cloudflare R2 (using put-object and debug)
+      - name: Upload macOS build to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: latest
+          files: build/macos/Build/Products/Release/Socket_Probe.zip
         env:
-          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
-          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
-        run: |
-          brew install awscli  # Install AWS CLI for macOS
-          aws configure set aws_access_key_id ${{ secrets.R2_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          aws configure set default.region auto
-
-          # Run the put-object command in debug mode
-          aws s3api put-object \
-            --bucket "${{ secrets.R2_BUCKET_NAME }}" \
-            --key "macos/Socket_Probe.zip" \
-            --body "build/macos/Build/Products/Release/Socket_Probe.zip" \
-            --acl public-read \
-            --endpoint-url "https://pub-6e37860d427d4ca69a176fe1bf8313b6.r2.dev" \
-            --debug
-
-          echo "✅ macOS build uploaded!"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-windows:
-    runs-on: windows-latest # ✅ Use Windows runner for Windows builds
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
@@ -68,23 +55,19 @@ jobs:
       - name: Build Windows app
         run: flutter build windows
 
-      - name: Upload Windows build to Cloudflare R2
-        run: |
-          choco install awscli  # ✅ Install AWS CLI for Windows
-          aws configure set aws_access_key_id ${{ secrets.R2_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          aws configure set default.region auto
-
-          aws s3 cp --endpoint-url=https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com \
-            build/windows/runner/Release/MyApp.exe s3://${{ secrets.R2_BUCKET_NAME }}/windows/MyApp.exe --acl public-read
-
-          echo "✅ Windows build uploaded!"
+      - name: Upload Windows build to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: latest
+          files: build/windows/runner/Release/MyApp.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   generate-links:
-    runs-on: ubuntu-latest # ✅ Use Ubuntu for generating download links
+    runs-on: ubuntu-latest
 
     steps:
       - name: Generate Public Links
         run: |
-          echo "Download macOS App: https://${{ secrets.R2_ACCOUNT_ID }}.r2.dev/${{ secrets.R2_BUCKET_NAME }}/macos/MyApp.dmg"
-          echo "Download Windows App: https://${{ secrets.R2_ACCOUNT_ID }}.r2.dev/${{ secrets.R2_BUCKET_NAME }}/windows/MyApp.exe"
+          echo "Download macOS App: https://github.com/${{ github.repository }}/releases/latest/download/Socket_Probe.zip"
+          echo "Download Windows App: https://github.com/${{ github.repository }}/releases/latest/download/MyApp.exe"

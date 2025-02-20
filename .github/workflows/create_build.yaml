@@ -79,4 +79,4 @@ jobs:
       - name: Generate Public Links
         run: |
           echo "Download macOS App: https://github.com/${{ github.repository }}/releases/latest/download/Socket_Probe_Macos.zip"
-          echo "Download Windows App: https://github.com/${{ github.repository }}/releases/latest/download/MyApp.exe"
+          echo "Download Windows App: https://github.com/${{ github.repository }}/releases/latest/download/Socket_Probe_Windows.zip"

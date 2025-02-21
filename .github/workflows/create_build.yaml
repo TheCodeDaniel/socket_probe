@@ -61,8 +61,11 @@ jobs:
 
       - name: Package Windows app as a zip
         run: |
-          cd build/windows/x64/runner/Release
-          Compress-Archive -Path "Socket_Probe.exe" -DestinationPath "Socket_Probe_Windows.zip"
+          $ReleasePath = "build/windows/x64/runner/Release"
+          $ZipPath = "build/windows/x64/runner/Release/Socket_Probe_Windows.zip"
+
+          # Include all necessary files (EXE + DLLs + Data)
+          Compress-Archive -Path "$ReleasePath/*" -DestinationPath $ZipPath
 
       - name: Upload Windows build to GitHub Releases
         uses: softprops/action-gh-release@v1

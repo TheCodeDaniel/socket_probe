@@ -61,14 +61,14 @@ jobs:
 
       - name: Package Windows app as a zip
         run: |
-          cd build/windows/runner/Release
+          cd build/windows/x64/runner/Release
           Compress-Archive -Path "Socket_Probe.exe" -DestinationPath "Socket_Probe_Windows.zip"
 
       - name: Upload Windows build to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
           tag_name: latest
-          files: build/windows/runner/Release/Socket_Probe_Windows.zip
+          files: build/windows/x64/runner/Release/Socket_Probe_Windows.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

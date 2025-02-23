@@ -9,6 +9,10 @@
 - Websocket headers and parameters for "event based" websockets.
 - 💻 Supports MacOS and Windows.
 
+# Examples
+<img width="720" alt="Example image description" src="https://github.com/user-attachments/assets/84fae435-8101-4c56-be98-3a52865548a9" />
+
+
 --
 
 # Installation

@@ -15,8 +15,8 @@ class _DashboardViewState extends State<DashboardView> {
     final size = MediaQuery.sizeOf(context);
     return DefaultTabController(
       length: 2,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
+        // crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const SizedBox(height: 20),
           Container(

@@ -31,7 +31,7 @@ or
 
 1. Linux Support.
 2. Dark mode support.
-3. Shorebird support.
+3. Shorebird support. ✅
 4. Websocket connection history.
 5. Websocket speed metrics and custom logs.
 6. modern UI re-design.

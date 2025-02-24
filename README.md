@@ -12,12 +12,7 @@
 # Examples
 
 <img width="720" alt="Example image description" src="https://github.com/user-attachments/assets/84fae435-8101-4c56-be98-3a52865548a9" /> <br/>
-
-Video Demo :-
-<video width="720" height="1280" controls>
-
-  <source src="https://objects.githubusercontent.com/github-production-release-asset-2e65be/930771467/73bd41e3-8c55-4e83-89f5-be4eeca94668?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250224%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250224T074459Z&X-Amz-Expires=300&X-Amz-Signature=789deea47620375e5c8a3978419072f2b5bb31298c42aa9c9a80d430209beac8&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3DScreen.Recording.2025-02-23.at.23.35.46.mov&response-content-type=application%2Foctet-stream" type="video/mp4">
-</video>
+![Screen Recording 2025-02-23 at 23 35 46](https://github.com/user-attachments/assets/680cb071-132e-449e-a1a8-8da06a9cb1d9)
 
 --
 

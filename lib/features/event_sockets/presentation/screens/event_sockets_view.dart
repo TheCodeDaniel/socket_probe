@@ -126,15 +126,19 @@ class _EventSocketsViewState extends State<EventSocketsView> {
                           Icon(Iconsax.warning_2, color: Colors.amber),
                           Text(
                             "Check your socket parameters before connecting to websocket",
-                            style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
                     Container(
                       width: size.width * 0.4,
-                      height: size.height * 0.2,
+                      height: size.height * 0.3,
                       padding: EdgeInsets.symmetric(horizontal: 20),
-                      color: Colors.grey.shade200,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.grey.shade400),
+                      ),
                       child: JsonEditorTheme(
                         themeData: JsonEditorThemeData(lightTheme: JsonTheme.light()),
                         child: JsonEditor.object(

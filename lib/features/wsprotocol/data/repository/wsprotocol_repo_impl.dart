@@ -26,7 +26,14 @@ class WsprotocolRepoImpl {
         },
         onError: (error) {
           // Forward errors to listeners.
-          _messageController.addError(error);
+          // _messageController.addError(error);
+          // Extract error message
+          final String errorMessage = error is WebSocketChannelException
+              ? 'WebSocket Error: ${error.inner}'
+              : 'Unknown WebSocket Error: $error';
+
+          // Forward a structured error message
+          _messageController.addError(errorMessage);
         },
         onDone: () {
           // Optionally notify listeners that the connection has closed.
